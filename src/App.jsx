@@ -8,6 +8,7 @@ const App = () => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [categories, setCategories] = useState([]); // State to store categories
+  const [reviews, setReviews] = useState({}); // State to store reviews for each product
 
   useEffect(() => {
     // Fetch products from API
@@ -35,13 +36,21 @@ const App = () => {
     setSelectedProduct(null); // Close modal after saving changes
   };
 
+  // Function to handle adding a review
+  const handleAddReview = (productId, review) => {
+    setReviews((prevReviews) => ({
+      ...prevReviews,
+      [productId]: [...(prevReviews[productId] || []), review],
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800">
       {/* Header Component */}
       <Header />
 
       {/* Main Content */}
-      <main className="p-6">
+      <main>
         <ProductList
           products={products}
           categories={categories} // Pass categories here
@@ -56,8 +65,10 @@ const App = () => {
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
+          reviews={reviews[selectedProduct.id] || []} // Pass reviews for the selected product
           onClose={() => setSelectedProduct(null)}
           onSave={handleUpdateProduct}
+          onAddReview={(review) => handleAddReview(selectedProduct.id, review)} // Pass onAddReview callback
         />
       )}
     </div>
